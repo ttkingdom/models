@@ -26,7 +26,7 @@ import vgslspecs
 import tensorflow.contrib.slim as slim
 from tensorflow.core.framework import summary_pb2
 from tensorflow.python.platform import tf_logging as logging
-
+from tensorflow.compat.v1 import ConfigProto
 
 # Parameters for rate decay.
 # We divide the learning_rate_halflife by DECAY_STEPS_FACTOR and use DECAY_RATE
@@ -150,7 +150,9 @@ def Eval(train_dir,
     sw = tf.summary.FileWriter(eval_dir)
 
     while True:
-      sess = tf.Session('')
+      config = ConfigProto()
+      config.gpu_options.allow_growth = True
+      sess = tf.Session(config=config)
       if graph_def_file is not None:
         # Write the eval version of the graph to a file for freezing.
         if not tf.gfile.Exists(graph_def_file):
